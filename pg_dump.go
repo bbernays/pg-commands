@@ -28,6 +28,9 @@ type Dump struct {
 	// e.g []string{"--inserts"}
 	Options []string
 
+	//File: name of the file that pgdump will create
+	File string
+
 	IgnoreTableData []string
 }
 
@@ -39,6 +42,10 @@ func NewDump(pg *Postgres) *Dump {
 func (x *Dump) Exec(opts ExecOptions) Result {
 	result := Result{Mine: "application/x-tar"}
 	result.File = x.newFileName()
+	if x.File != "" {
+		x.File = result.File
+	}
+
 	options := append(x.dumpOptions(), fmt.Sprintf(`-f%s%v`, x.Path, result.File))
 	result.FullCommand = strings.Join(options, " ")
 	cmd := exec.Command(PGDumpCmd, options...)
@@ -70,6 +77,10 @@ func (x *Dump) SetPath(path string) {
 	x.Path = path
 }
 
+func (x *Dump) SetFileName(fileName string) {
+	x.File = fileName
+}
+
 func (x *Dump) newFileName() string {
 	return fmt.Sprintf(`%v_%v.sql.tar.gz`, x.DB, time.Now().Unix())
 }
@@ -94,7 +105,7 @@ func (x *Dump) dumpOptions() []string {
 func (x *Dump) IgnoreTableDataToString() []string {
 	var t []string
 	for _, tables := range x.IgnoreTableData {
-		t = append(t, "--exclude-table-data=" + tables)
+		t = append(t, "--exclude-table-data="+tables)
 	}
 	return t
 }
