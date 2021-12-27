@@ -43,7 +43,7 @@ func (x *Dump) Exec(opts ExecOptions) Result {
 	result := Result{Mine: "application/x-tar"}
 	result.File = x.newFileName()
 	if x.File != "" {
-		x.File = result.File
+		result.File = x.File
 	}
 
 	options := append(x.dumpOptions(), fmt.Sprintf(`-f%s%v`, x.Path, result.File))
