@@ -1,4 +1,4 @@
-module github.com/habx/pg-commands
+module github.com/bbernays/pg-commands
 
 go 1.15
 
